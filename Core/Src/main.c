@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "7segdecoder.h"			//Giải mã led 7-seg
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +42,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+/// Hàng đơn vị của số cần hiển thị, phạm vi [0..9]
+unsigned char unit_num;
+/// Hàng chục của số cần hiển thị, phạm vi [0..9]
+unsigned char ten_num;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -54,6 +57,29 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/**
+ * @brief	Thiết lập giá trị hiển thị cho các đoạn trên led 7-seg,
+ * @note    Cần tắt toàn bộ led 7-seg trước khi sử dụng hàm
+ * @param[in]  val 	Giá trị cần hiển thị
+ *
+ */
+void Setup7Seg(unsigned char val){
+	/// Giá trị các chân 7 đoạn
+	static bool a,b,c,d,e,f,g;
+
+	  /// Chuyển thành số nguyên thành giá trị các thanh led 7 đoạn
+	  NumberTo7seg(val, &a, &b, &c, &d, &e, &f, &g);
+
+	  /// Tuần tự thiết lập tắt bật của từng đoạn led.
+	  HAL_GPIO_WritePin(A_GPIO_Port, A_Pin, a);
+	  HAL_GPIO_WritePin(B_GPIO_Port, B_Pin, b);
+	  HAL_GPIO_WritePin(C_GPIO_Port, C_Pin, c);
+	  HAL_GPIO_WritePin(D_GPIO_Port, D_Pin, d);
+	  HAL_GPIO_WritePin(E_GPIO_Port, E_Pin, e);
+	  HAL_GPIO_WritePin(F_GPIO_Port, F_Pin, f);
+	  HAL_GPIO_WritePin(G_GPIO_Port, G_Pin, g);
+
+}
 
 /* USER CODE END 0 */
 
@@ -99,14 +125,61 @@ int main(void)
   HAL_GPIO_WritePin(PING_ENABLED_GPIO_Port, PING_ENABLED_Pin, GPIO_PIN_SET);
   HAL_Delay(1000);
   HAL_GPIO_WritePin(BLUE_ENABLED_GPIO_Port, BLUE_ENABLED_Pin, GPIO_PIN_SET);
-
+  HAL_Delay(1000);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  /// Giá trị đếm tăng dần để hiển thị, xoay vòng từ 0 --> 99.
+  int count = 0;
+
+  /// Giá trị đếm để quét hiển thị giữa 2 led 7 seg
+  int scan_count = 0;
+
+
   while (1)
   {
+	  /// Xác định giá trị cần hiển thị cho mỗi đèn led
+	  unit_num = count % 10;
+	  ten_num = (int)(count / 10);
+
+
+	  {//-----------LED PING hiển thị------------------------
+		  /// Bước 1. Tắt tất cả các led. Như vậy qua trình tắt/bật từng thanh led sẽ không bị nhìn thấy.
+		  /// Lưu ý: Lệnh tắt này tác động lên cả 2 chân PING_ENABLED_Pin và BLUE_ENABLED_Pin cùng lúc, đòi hỏi cả 2 pin này phải cùng một Group Port.
+		  HAL_GPIO_WritePin(PING_ENABLED_GPIO_Port, PING_ENABLED_Pin | BLUE_ENABLED_Pin, GPIO_PIN_RESET);
+
+		  /// Bước 2: Chuẩn bị nội dung hiển thị trên 7 đoạn led 1
+		  Setup7Seg(ten_num);
+
+		  /// Bước 3. Chỉ bật đúng led 7-seg mong muôn
+		  HAL_GPIO_WritePin(PING_ENABLED_GPIO_Port, PING_ENABLED_Pin, GPIO_PIN_SET);
+	  }
+	  HAL_Delay(20);
+	  {//-----------LED BLUE hiển thị------------------------
+		  /// Bước 1. Tắt tất cả các led. Như vậy qua trình tắt/bật từng thanh led sẽ không bị nhìn thấy.
+		  /// Lưu ý: Lệnh tắt này tác động lên cả 2 chân PING_ENABLED_Pin và BLUE_ENABLED_Pin cùng lúc, đòi hỏi cả 2 pin này phải cùng một Group Port.
+		  HAL_GPIO_WritePin(PING_ENABLED_GPIO_Port, PING_ENABLED_Pin | BLUE_ENABLED_Pin, GPIO_PIN_RESET);
+
+		  /// Bước 2: Chuẩn bị nội dung hiển thị trên 7 đoạn led 2
+		  Setup7Seg(unit_num);
+
+		  /// Bước 3. Chỉ bật đúng led 7-seg mong muôn
+		  HAL_GPIO_WritePin(BLUE_ENABLED_GPIO_Port, BLUE_ENABLED_Pin, GPIO_PIN_SET);
+	  }
+
+	  ///Chuẩn bị cho bước tiếp theo. Đếm xoay vòng
+	  scan_count++;
+	  if (scan_count > 10000) {
+		  scan_count = 0;
+		  //Tăng và xoay vòng giá trị cần hiển thị
+		  count++;
+		  if (count > 99) {
+			  count = 0;
+		  }
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
