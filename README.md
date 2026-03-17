@@ -4,6 +4,14 @@
  
  Programming STM32F429FzIT6 to show decimal numbers on two __7-segs leds__, pluged on breadboard with 2 [2N2222 transistors](https://dientusangtaovn.com/transistor-2n2222/).
 
+## Bill of Materials / Danh sách linh kiện
+
+- 1 x [Breadboard cắm](https://chotroihn.vn/bo-test-mau-syb170)
+- 2 x led 7 đoạn với [cathode (âm cực chung)](https://chotroihn.vn/led-7-thanh-0-56inch-katot-chung-sang-do)
+- 2 x transistor [2N2222 transistors](https://dientusangtaovn.com/transistor-2n2222/).
+- 8 x điện trở [330 Ohm](https://chotroihn.vn/tro-vach-1-4w-5-goi-50con-2)
+- 20 x Dây căm breadboard [đực-đực](https://chotroihn.vn/day-cam-test-board-day-duc-duc-day-duc-cai-day-cai-cai-day-noi-7-mau-10cm)
+
 ## Breadboard / Bo mạch cắm
 
 - Breadboard simulation at wowki: <https://wokwi.com/projects/425825654973202433> \
