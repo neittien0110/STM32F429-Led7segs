@@ -157,7 +157,7 @@ int main(void)
 		  /// Bước 3. Chỉ bật đúng led 7-seg mong muôn
 		  HAL_GPIO_WritePin(PING_ENABLED_GPIO_Port, PING_ENABLED_Pin, GPIO_PIN_SET);
 	  }
-	  HAL_Delay(20);
+	  HAL_Delay(5);
 	  {//-----------LED BLUE hiển thị------------------------
 		  /// Bước 1. Tắt tất cả các led. Như vậy qua trình tắt/bật từng thanh led sẽ không bị nhìn thấy.
 		  /// Lưu ý: Lệnh tắt này tác động lên cả 2 chân PING_ENABLED_Pin và BLUE_ENABLED_Pin cùng lúc, đòi hỏi cả 2 pin này phải cùng một Group Port.
@@ -169,10 +169,10 @@ int main(void)
 		  /// Bước 3. Chỉ bật đúng led 7-seg mong muôn
 		  HAL_GPIO_WritePin(BLUE_ENABLED_GPIO_Port, BLUE_ENABLED_Pin, GPIO_PIN_SET);
 	  }
-
+	  HAL_Delay(4);
 	  ///Chuẩn bị cho bước tiếp theo. Đếm xoay vòng
 	  scan_count++;
-	  if (scan_count > 10000) {
+	  if (scan_count > 10) {		// Ước lượng để tạo chu kì tăng giá trị hiển thị dễ xem, quan sát.
 		  scan_count = 0;
 		  //Tăng và xoay vòng giá trị cần hiển thị
 		  count++;
@@ -236,8 +236,8 @@ void SystemClock_Config(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
@@ -266,8 +266,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -288,8 +288,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
